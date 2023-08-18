@@ -23,20 +23,20 @@ const Login = () =>{
         }
     }, [email, password]);
 
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    //     setLoading(true);
-    //     e.preventDefault();
-    //     const body = {
-    //         email,
-    //         password,
-    //     };
-    //     await axios
-    //         .post("login")
-    // }
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
+        e.preventDefault();
+        const body = {
+            email,
+            password,
+        };
+        await axios
+            .post("login")
+    };
 
     return (
         <Layout>
-            <div className="w-full h-screen flex flex-col overflow-auto bg-slate-600">
+            <div className="w-full h-screen flex flex-col overflow-auto bg-white">
                 <div className="w-full hp-screen">
                     <div className="flex flex-row">
                         <div className="flex-1 bg-white">

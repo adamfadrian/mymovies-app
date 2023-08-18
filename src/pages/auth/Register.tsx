@@ -60,7 +60,7 @@ const Register = () =>{
 
     return (
         <Layout>
-            <div className="w-full h-screen flex flex-col overflow-auto bg-slate-600">
+            <div className="w-full h-screen flex flex-col overflow-auto bg-white">
                 <div className="w-full hp-screen">
                     <div className="flex flex-row pb-20">
                         <div className="flex-1 bg-white">
