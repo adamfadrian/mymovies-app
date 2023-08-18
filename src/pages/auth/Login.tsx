@@ -81,6 +81,7 @@ const Login = () =>{
                                     <Button
                                         id="btn-login"
                                         label="Login"
+                                        className="btn btn-wide btn-md 2xl:btn-lg flex mx-auto 2xl:mt-10 2xl:mb-10 px-4 py-2 tracking-wide border-orange-alta hover:border-orange-alta text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
                                         loading={loading || disabled}
                                     />
                                 </form>

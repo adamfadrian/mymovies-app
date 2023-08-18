@@ -138,6 +138,7 @@ const Register = () =>{
                                     <Button
                                         id="btn-register"
                                         label="Signup"
+                                        className="bg-bg-button w-10/12 lg:w-6/12 "
                                         loading={loading || disabled}
                                     />
                                 </form>
