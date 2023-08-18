@@ -2,17 +2,22 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useState, useMemo, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import Homepage from "../pages";
-import Detail from "../pages/Detail";
-import Favorite from "../pages/Favorite";
+import Homepage from "pages";
+import Login from "pages/auth/Login";
+import Detail from "pages/Detail";
+import Favorite from "pages/Favorite";
 
-import { setFavorites } from "../utils/redux/reducers/reducer";
-import { ThemeContext } from "../utils/context";
+import { setFavorites } from "utils/redux/reducers/reducer";
+import { ThemeContext } from "utils/context";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Homepage />,
+  },
+  {
+    path: "/login",
+    element: <Login />
   },
   {
     path: "/detail/:id_movie",
