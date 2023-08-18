@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 
 import Homepage from "pages";
 import Login from "pages/auth/Login";
+import Register from "pages/auth/Register";
 import Detail from "pages/Detail";
 import Favorite from "pages/Favorite";
 
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "/detail/:id_movie",
