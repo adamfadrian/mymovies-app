@@ -67,12 +67,12 @@ const Login = () =>{
             <Container>
                 <div className="relative flex flex-col w-full bg-dark-alta">
                     <div className="flex items-center justify-center  my-auto">
-                        <img src={login} width={500} alt="" className="" />
+                        <img src={login} width={450} alt="" className="" />
                     </div>
                 </div>
 
                 <div className="flex flex-col justify-center w-full h-screen ">
-                    <div className="w-full p-6 m-auto bg-zinc-200 rounded-md shadow-xl lg:max-w-xl justify-center ">
+                    <div className="w-full p-5 m-auto bg-zinc-200 rounded-md shadow-xl lg:max-w-xl justify-center ">
                         <h1 className="text-5xl font-bold text-center text-dark-alta uppercase mt-10 mb-10">
                             Sign in
                         </h1>
@@ -140,7 +140,7 @@ const Login = () =>{
                         <p className="mt-8 text-xs font-light text-center text-dark-alta mb-10">
                             {" "}
                             Don't have an account?{" "}
-                            <a href="#" className="font-medium text-dark-alta hover:underline">
+                            <a href="Register" className="font-medium text-dark-alta hover:underline">
                                 Sign up
                             </a>
                         </p>

@@ -1,268 +1,176 @@
-import React, { useState, useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HiEye, HiEyeOff, HiOutlineMail, HiOutlineUserCircle } from "react-icons/hi";
-import { TfiUnlock } from "react-icons/tfi";
+import React, { useEffect, useState, useCallback } from "react";
+import { useCookies } from "react-cookie";
+import { useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import axios from "axios";
 
-import Upload from "src/assets/Upload.png";
+import upload from "assets/Upload.png";
 import Container from "components/Container";
 import Layout from "components/Layout";
 
-const Register = () =>{
+const Registrasi = () =>{
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [fullname, setFullname] = useState("");
+    const [cookies, setCookie] = useCookies(["userToken"]);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [disabled, setDisabled] = useState<boolean>(true);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [name, setName] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [showPassword, setShowPassword] = useState(false);
+
+    const authRegister = useCallback(
+        async (e: any) => {
+          e.preventDefault();
+          try {
+            const response = await axios.post(
+              "https://my-extravaganza.site/users/login",
+              {
+                email: email,
+                password: password,
+              },
+            );
+            const { data } = response.data;
+            console.log(data);
+            if (data) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                text: "Signed successfully",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              setCookie("userToken", data.role, { path: "/" });
+              setCookie("userToken", data.token, { path: "/" });
+              //dispatch(login(data));
+              navigate("/dashboard");
+            }
+          } catch (error) {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Email or Password incorrect",
+              showConfirmButton: true,
+            });
+            console.log(error);
+          }
+        },
+        [dispatch, email, navigate, password, setCookie],
+    );
 
     useEffect(() => {
-        if (name && email && password) {
-          setDisabled(false);
-        } else {
-          setDisabled(true);
+        if (cookies.userToken) {
+          navigate("/dashboard");
         }
-    }, [name, email, password]);
-    
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        setLoading(true);
-        e.preventDefault();
-        const body = {
-          name,
-          email,
-          password,
-        };
-        await axios
-    //       .post("", body)
-    //       .then((res) => {
-    //         const { message, data } = res.data;
-           
-    //           title: "Success",
-    //           text: "Account created",
-    //           showCancelButton: false,
-    //         });
-    //         if (res) {
-    //           navigate("/login");
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         const { message } = err.response;
-           
-    //           title: "Failed",
-    //           text: "Please use another email",
-    //           showCancelButton: false,
-    //         });
-    //       })
-    //       .finally(() => setLoading(false));
-    };
+      }, [cookies.userToken, navigate]);
 
-
-    const handleTogglePassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const bgSm = {
-        backgroundImage: `url('${Upload}')`,
-        backgroundSize: "cover",
-    };
 
     return (
         <Layout>
-            <div className="flex flex-row pb-20">
-                {/* <div className="flex-1 w-full h-auto lg:flex flex-col justify-center items-center text-6xl font-bold text-white">
-                    <img 
-                        src={Upload}
-                        className="mx-auto alig-center justify-center mt-20"
-                        style={{ width: "60%" }}
-                    />
-                </div> */}
-                <Container>
-                    {
-                        screen.width > 767 ? 
-                        <div className="h-screen w-screen ">
-                            <div className="flex h-screen items-center xl:ml-[200px] md:ml">
-                                <div className="w-fit p-6 bg-blue-500 align-middle rounded-xl shadow-xl 2xl:max-w-md 2xl:max-h-[800px] lg:max-h-[600px] xl:max-w-lg">
-                                    <h1 className="text-2xl 2xl:text-5xl font-bold text-center text-white uppercase py-5 ">
-                                        REGISTER
-                                    </h1>
-                                    <p className="text-white text-center 2xl:mb-20 mb-10   ">
-                                        To keep connected with us please Register with your personal
-                                        information by email adress, password and username
-                                    </p>
+            <Container>
+                <div className="relative flex flex-col w-full bg-dark-alta">
+                    <div className="flex items-center justify-center  my-auto">
+                        <img src={upload} width={450} alt="" className="" />
+                    </div>
+                </div>
 
-                                        <form className="flex flex-col" >
-                                            <div className="relative z-0 w-full mb-10 group ">
-                                                <input
-                                                    value={email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                    type="email"
-                                                    name="email"
-                                                    id="email"
-                                                    className=" block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none dark:text-white dark:border-white dark:focus:border-white focus:outline-none focus:ring-0 focus:border-white peer active:outline-none active:bg-transparent active:ring-0"
-                                                    placeholder=""
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="email"
-                                                    className="peer-focus:font-xl flex flex-row gap-2 absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-white peer-focus:dark:text-white peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <HiOutlineMail size={20} /> Email address
-                                                </label>
-                                            </div>
-                        
-                                            <div className="relative z-0 w-full mb-10 group">
-                                                <input
-                                                    value={password}
-                                                    onChange={(e) => setPassword(e.target.value)}
-                                                    type={showPassword ? "text" : "password"}
-                                                    name="password"
-                                                    id="password"
-                                                    className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none dark:text-white dark:border-white dark:focus:border-white focus:outline-none focus:ring-0 focus:border-white peer"
-                                                    placeholder=" "
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="password"
-                                                    className="flex flex-row gap-2 peer-focus:font-medium absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-white peer-focus:dark:text-white peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <TfiUnlock size={20} /> Password
-                                                </label>
-                                                <button
-                                                    type="button"
-                                                    className="absolute right-2 top-2 text-white"
-                                                    onClick={handleTogglePassword}
-                                                >
-                                                    {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                                                </button>
-                                            </div>
-                                            <div className="relative z-0 w-full mb-10 group">
-                                                <input
-                                                    value={name}
-                                                    onChange={(e) => setName(e.target.value)}
-                                                    type="username"
-                                                    name="username"
-                                                    id="username"
-                                                    className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none dark:text-white dark:border-white dark:focus:border-white focus:outline-none focus:ring-0 focus:border-white peer"
-                                                    placeholder=" "
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="username"
-                                                    className="flex flex-row gap-2 peer-focus:font-xl absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-white peer-focus:dark:text-white peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <HiOutlineUserCircle size={20} /> Username
-                                                </label>
-                                            </div>
-
-                                            <button
-                                                onClick={handleTogglePassword}
-                                                className="btn btn-wide btn-md 2xl:btn-lg flex mx-auto 2xl:mt-10 mt-5 mb-10 px-4 py-2 tracking-wide border-orange-alta hover:border-orange-alta text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
-                                            >
-                                                <p className="text-2xl">SignUp</p>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div> 
-        
-                            :
-                            <div className="flex  flex-col w-screen">
-                                <div className="flex-1 w-full h-auto lg:flex flex-col justify-center items-center text-6xl font-bold text-white">
-                                    <img 
-                                        src={Upload}
-                                        className="mx-auto alig-center justify-center mt-20"
-                                        style={{ width: "60%" }}
+                <div className="flex flex-col justify-center w-full h-screen ">
+                    <div className="w-full p-3 m-auto bg-zinc-200 rounded-md shadow-xl lg:max-w-xl justify-center ">
+                        <h1 className="text-5xl font-bold text-center text-dark-alta uppercase mt-10 mb-10">
+                            Sign Up
+                        </h1>
+                        <form
+                            className="mt-7 flex flex-col justify-center align-middle"
+                            onSubmit={authRegister}
+                        >
+                            <div className="mb-5 mx-auto">
+                                <label
+                                    htmlFor="fullname"
+                                    className="block text-sm font-semibold text-dark-alta"
+                                >
+                                    Full Name
+                                </label>
+                                <input
+                                    placeholder="example"
+                                    required
+                                    value={fullname}
+                                    onChange={(e) => setFullname(e.target.value)}
+                                    type="fullname"
+                                    className="input input-md block w-[400px] px-4  py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
+                                />
+                            </div>
+                            <div className="mb-5 mx-auto">
+                                <label
+                                    htmlFor="email"
+                                    className="block text-sm font-semibold text-dark-alta"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    placeholder="example@gmail.com"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    type="email"
+                                    className="input input-md block w-[400px] px-4  py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
+                                />
+                            </div>
+                            <div className="mb-2 mx-auto">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-sm font-semibold text-dark-alta"
+                                >
+                                    Password
+                                </label>
+                                <input
+                                    placeholder="Type your password"
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    type="password"
+                                    className="input input-md w-[400px] block mx-auto px-4 py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
+                                />
+                            </div>
+                            <div className="flex flex-row justify-between ">
+                                <p className="flex items-center text-dark-alta text-xs ml-16">
+                                    <input
+                                    className="mr-1 text-dark-alta checkbox checkbox-xs  "
+                                    type="checkbox"
                                     />
-                                </div>
-                                <div className="flex h-screen items-center xl:ml-[200px] md:ml">
-                                    <div className="w-full h-auto p-6 bg-blue-500 align-middle  shadow-xl lg:max-w-xl">
-                                        <h1 className="text-2xl font-bold text-center text-white uppercase mt-4 mb-10">
-                                            REGISTER
-                                        </h1>
-                                        <form className="flex flex-col" >
-                                            <div className="relative z-0 w-full mb-10 group ">
-                                                <input
-                                                    value={email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                    type="email"
-                                                    name="email"
-                                                    id="email"
-                                                    className=" block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer active:outline-none active:bg-transparent active:ring-0"
-                                                    placeholder=" "
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="email"
-                                                    className="peer-focus:font-xl flex flex-row gap-2 absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <HiOutlineMail size={20} /> Email address
-                                                </label>
-                                            </div>
+                                    Remember Me
+                                </p>
+                                <a
+                                    href="#"
+                                    className="text-xs text-dark-alta hover:underline mr-16"
+                                >
+                                    Forget Password?
+                                </a>
+                            </div>
+                            <div className="mt-10 mx-auto ">
+                            <button
+                                // onClick={() => handleLogin()}
+                                className="btn btn-wide mx-auto px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
+                            >
+                                Login
+                            </button>
+                            </div>
+                        </form>
 
-                                            <div className="relative z-0 w-full mb-10 group">
-                                                <input
-                                                    value={password}
-                                                    onChange={(e) => setPassword(e.target.value)}
-                                                    type={showPassword ? "text" : "password"}
-                                                    name="password"
-                                                    id="password"
-                                                    className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                                    placeholder=" "
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="password"
-                                                    className="flex flex-row gap-2 peer-focus:font-medium absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <TfiUnlock size={20} /> Password
-                                                </label>
-                                                <button
-                                                    type="button"
-                                                    className="absolute right-2 top-2 text-white"
-                                                    onClick={handleTogglePassword}
-                                                >
-                                                    {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                                                </button>
-                                            </div>
-                                            <div className="relative z-0 w-full mb-10 group">
-                                                <input
-                                                    value={name}
-                                                    onChange={(e) => setName(e.target.value)}
-                                                    type="name"
-                                                    name="name"
-                                                    id="name"
-                                                    className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                                    placeholder=" "
-                                                    required
-                                                />
-                                                <label
-                                                    htmlFor="username"
-                                                    className="flex flex-row gap-2 peer-focus:font-xl absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                                >
-                                                    <HiOutlineUserCircle size={20} /> Username  
-                                                </label>
-                                            </div>
+                        <p className="mt-8 text-xs font-light text-center text-dark-alta mb-10">
+                            {" "}
+                            Don't have an account?{" "}
+                            <a href="Login" className="font-medium text-dark-alta hover:underline">
+                                Sign up
+                            </a>
+                        </p>
+                    </div>
+                </div>
 
-                                            <button
-                                                onClick={handleTogglePassword}
-                                                className="btn btn-wide sm:btn-sm md:btn-md lg:btn-lg flex mx-auto mt-10 mb-10 px-4 py-2 tracking-wide border-orange-alta hover:border-orange-alta text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
-                                            >
-                                                <p className="text-2xl">SignUp</p>
-                                            </button>
-                                            <p>Already have an account?</p>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>  
-                    }
-                    
-                    
-                </Container>
-            </div>
+                
+            </Container>
         </Layout>
+
     );
 };
 
-export default Register;
+
+
+export default Registrasi;
