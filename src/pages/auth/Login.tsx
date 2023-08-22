@@ -1,208 +1,180 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import { HiEye, HiEyeOff, HiOutlineMail } from "react-icons/hi";
-import { TfiUnlock } from "react-icons/tfi";
+import { TfiLock } from "react-icons/tfi";
+import { CiMail } from "react-icons/ci";
 import axios from "axios";
 
 import login from "src/assets/Login.png";
-import Layout from "components/Layout";
-import Container from "components/Container";
+import Footer from "components/Footer";
+import Alert from "components/Alert";
 
 const Login = () =>{
-    const [, setCookie] = useCookies(["token", "id"]);
+    const [alert, setAlert] = useState(false);
+    const [isActive, setIsActive] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    let username = "";
+    const [idUser, setIdUser] = useState<any>([]);
+    const [cookies, setCookie] = useCookies();
     const navigate = useNavigate();
-    const [disabled, setDisabled] = useState<boolean>(true);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [password, setPassword] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [showPassword, setShowPassword] = useState(false);
 
-    useEffect(() => {
-        if (email && password) {
-            setDisabled(false);
-        } else{
-            setDisabled(true);
+    // useEffect(() => {
+    //     if (email && password) {
+    //         setDisabled(false);
+    //     } else{
+    //         setDisabled(true);
+    //     }
+    // }, [email, password]);
+
+    const handleModal = () => {
+        setIsActive(true);
+    };
+    
+    const handleEmail = (e: string) => {
+        setEmail(e);
+    };
+    
+    const handlePassword = (e: string) => {
+        setPassword(e);
+    };
+    
+        async function handleLogin(e:any) {
+            if (email && password !== '') {
+                axios.post("https://altaimmersive.site/login ", {
+                    "email": `${email}`,
+                    "password": `${password}`
+                })
+                    .then((response) => {
+                        const { name } = response.data.data;
+                        const { id } = response.data.data;
+                        const token = response.data.token
+                        username = name
+                        idUser.push(id)
+                        setCookie('username', username, { path: "/" })
+                        setCookie('id', idUser, { path: "/" })
+                        setCookie('token', token, { path: "/" })
+                        navigate(`/Dashboard/${username}`, {
+                            state: {
+                                userId: idUser
+                            }
+                        })
+                        window.location.reload()
+                    })
+                    .catch((error) => {
+                        setAlert(true)
+                        const result = isAlert();
+                    });
+            } else {
+                // jika username dan password kosong
+                setAlert(true)
+                const result = await isAlert();
+            }
         }
-    }, [email, password]);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        setLoading(true);
-        e.preventDefault();
-        const body = {
-            email,
-            password,
-        };
-        await axios
-            .post("login")
-    };
+        // alert arror login
+        function isAlert() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    setAlert(false);
+                }, 7000);
+            });
+        }
 
-    const handleTogglePassword = () => {
-        setShowPassword(!showPassword);
-    };
+        // ketika username masih tersimpan di cookie ,user tidak perlu login kembali
+        if (cookies.username) {
+            navigate(`/Dashboard/${cookies.username}`);
+        }
+
 
     return (
-        <Layout>
-            <Container>
-                {
-                    screen.width > 767 ?
-                    <div className="h-screen w-screen ">
-                        <div className="flex items-center mt-4 xl:ml-[200px] md:ml">
-                            <div className="w-fit p-6 bg-blue-500 align-middle rounded-xl shadow-xl lg:max-w-md h-full xl:max-w-lg">
-                                <h1 className="text-2xl font-bold text-center text-white uppercase mt-10 mb-10 2xl:text-4xl">
-                                    LOGIN
-                                </h1>
-                                <p className="text-white text-center mb-7 2xl:mb-20">
-                                    To keep connected with us please login with your personal
-                                    information by email adress and password
-                                </p>
-                                <form className="flex flex-col" onSubmit={handleSubmit}>
-              
-                                    <div className="relative z-0 w-full mb-5 2xl:mb-10 group ">
-                                        <input
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            type="email"
-                                            name="email"
-                                            id="email"
-                                            className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-whitw appearance-none dark:text-white dark:border-white dark:focus:border-white focus:outline-none focus:ring-0 focus:border-white peer"
-                                            placeholder=" "
-                                            required
-                                        />
-                                        <label
-                                            htmlFor="email"
-                                            className="peer-focus:font-medium flex flex-row gap-2 absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-white peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                        >
-                                            <HiOutlineMail size={20} /> Email address
-                                        </label>
-                                    </div>
-                                    <div className="relative z-0 w-full mb-10 group">
-                                        <input
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            type={showPassword ? "text" : "password"}
-                                            name="password"
-                                            id="password"
-                                            className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none dark:text-white dark:border-white dark:focus:border-white focus:outline-none focus:ring-0 focus:border-white peer"
-                                            placeholder=" "
-                                            required
-                                        />
-                                        <label
-                                            htmlFor="password"
-                                            className="flex flex-row gap-2 peer-focus:font-medium absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-white peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                        >
-                                            <TfiUnlock size={20} /> Password
-                                        </label>
-                                        <button
-                                            type="button"
-                                            className="absolute right-2 top-2 text-white"
-                                            onClick={handleTogglePassword}
-                                            >
-                                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
-                                        </button>
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        className="btn btn-wide btn-md 2xl:btn-lg flex mx-auto 2xl:mt-10 2xl:mb-10 px-4 py-2 tracking-wide border-orange-alta hover:border-orange-alta text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
-                                    >
-                                        <p className="text-xl 2xltext-2xl">Login</p>
-                                    </button>
-                                </form>
-
-                                <p className="mt-8 text-lg font-light text-center text-white mb-10">
-                                    {" "}
-                                    Don't have an account?{" "}
-                                    <p
-                                        onClick={() => navigate('/register')}
-                                        className="font-medium text-white hover:underline hover:text-orange-600"
-                                    >
-                                        Sign up
-                                    </p>
-                                </p>
-                            </div>
+        <div>
+            {screen.width >= 885 ? (
+                // dekstop
+                <>
+                    <div className={`absolute top-0 z-50 w-full px-5 mt-5 duration-400 ${alert ? "block" : "hidden"}  `}>
+                        <Alert />
+                    </div>
+                    <div className="w-full h-full flex flex-row px-16">
+                        <div className="w-3/4 flex items-center ">
+                            <img className="w-full" src={login} alt="" />
                         </div>
-                    </div> 
-                    : 
-
-                    <div className="flex flex-col w-screen">
-                        <div className="h-full w-full bg-blue-500 z-10"> </div>
-                        <div className="flex h-screen items-center xl:ml-[200px] md:ml">
-                            <div className="w-full h-auto p-6 bg-blue-500 align-middle  shadow-xl lg:max-w-xl">
-                                <h1 className="text-4xl font-bold text-center text-white uppercase mt-10 mb-10">
-                                LOGIN
-                            </h1>
-
-                        <form className="flex flex-col" onSubmit={handleSubmit}>
-                            <div className="relative z-0 w-full mb-10 group ">
-                                <input
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    placeholder=" "
-                                    required
-                                />
-                                <label
-                                    htmlFor="email"
-                                    className="peer-focus:font-medium flex flex-row gap-2 absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                >
-                                    <HiOutlineMail size={20} /> Email address
-                                </label>
+                        <div className="w-2/5 flex flex-col gap-8 px-2">
+                            <h1 className="text-4xl">Welcome Back</h1>
+                            <p>To keep conected with us please login with your personal information by email adress and password </p>
+                            <form className="flex flex-col gap-2 ">
+                                <div className="flex items-center gap-3 p-2 rounded-lg bg-grayalta">
+                                    <CiMail className="text-2xl" />
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[12px]">Email Adress</label>
+                                        <input onChange={(e) => handleEmail(e.target.value)} className="bg-transparent text-[16px] h-4 outline-none " type="email" required />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 p-2 rounded-lg bg-grayalta">
+                                    <TfiLock className="text-2xl" />
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-[12px]">Password</label>
+                                        <input onChange={(e) => handlePassword(e.target.value)} className="bg-transparent text-[16px] h-4 outline-none " type="password" required />
+                                    </div>
+                                </div>
+                            </form>
+                            <div className="flex justify-between ">
+                                <div>
+                                    <input id="remember" className="cursor-pointer mr-2" type="checkbox" />
+                                    <label htmlFor="remember" className="cursor-pointer">
+                                        Remember Me
+                                    </label>
+                                </div>
+                                <label className="cursor-pointer">Forget password?</label>
                             </div>
-                            <div className="relative z-0 w-full mb-10 group">
-                                <input
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    type={showPassword ? "text" : "password"}
-                                    name="password"
-                                    id="password"
-                                    className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-white dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    placeholder=" "
-                                    required
-                                />
-                                <label
-                                    htmlFor="password"
-                                    className="flex flex-row gap-2 peer-focus:font-medium absolute text-sm text-white dark:text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                                >
-                                    <TfiUnlock size={20} /> Password
-                                </label>
-                                <button
-                                    type="button"
-                                    className="absolute right-2 top-2 text-white"
-                                    onClick={handleTogglePassword}
-                                >
-                                    {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+                            <div>
+                                <button onClick={handleLogin} className="w-24 h-10 bg-blue text-white rounded-lg">
+                                    {" "}
+                                    Login
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                </>
+            ) : (
 
-                            <button
-                                type="submit"
-                                className="btn btn-wide sm:btn-sm md:btn-md lg:btn-lg flex mx-auto mt-10 px-4 py-2 tracking-wide border-orange-alta hover:border-orange-alta text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
-                                    >
-                                <p className="text-2xl">Login</p>
+                // mobile & ipad
+                <div className="bg-gray-100 duration-500">
+                    <div className={`absolute top-0 z-50 w-full px-5 mt-5 duration-400 ${alert ? "block" : "hidden"}  `}>
+                        <Alert />
+                    </div>
+                    <div className=" h-screen overflow-auto bg-gray-100 ">
+                        <div className="flex flex-col justify-center py-5 px-3 items-center gap-8">
+                            <h1 className="text-4xl md:text-5xl font-bold text-blue">Welcome </h1>
+                            <img src={login} alt="" />
+                            <p className="text-center tetx-2xl md:text-2xl ">Start your career as a company's dream Software Engineer through the Immersive Program!</p>
+                            <button onClick={handleModal} className="w-56 h-12 rounded-full bg-blue text-white text-xl font-semibold">
+                                Login
+                            </button>
+                            <button className="w-56 h-12 rounded-full bg-blue text-white text-xl font-semibold">Register</button>
+                        </div>
+                    </div>
+
+                    {/* modal */}
+                    <div className={`${isActive ? "-translate-y-full" : "translate-y-full"} shadow-2xl shadow-black w-full h-4/5  fixed duration-500 bg-white flex flex-col items-center gap-8 p-3`}>
+                        <h1 className="text-3xl font-semibold text-blue">Login</h1>
+                        <p className="text-center text-blue">To keep conected with us please login with your personal information by email adress and password </p>
+                        <form className="flex flex-col gap-4">
+                            <input onChange={(e) => handleEmail(e.target.value)} className="p-2 px-5 outline-none bg-gray-100 rounded-full" type="email" placeholder="Email" required />
+                            <input onChange={(e) => handlePassword(e.target.value)} className="p-2 px-5 outline-none bg-gray-100 rounded-full" type="password" placeholder="Password" required />
+                            <button onClick={(e) => handleLogin(e.preventDefault())} className="w-58 h-8 bg-blue text-white rounded-full">
+                                Login
                             </button>
                         </form>
-
-                        <p className="mt-8 text-lg font-light text-center text-white mb-10">
-                            {" "}
-                            Don't have an account?{" "}
-                            <a
-                                href="/register"
-                                className="font-medium text-white hover:underline hover:text-green-600"
-                            >
-                                Sign up
-                            </a>
+                        <p className="text-md font-semibold text-blue">Forget Password?</p>
+                        <p className="text-blue">
+                        Dont have an account? <span className="text-orange">Register</span>
                         </p>
                     </div>
                 </div>
-            </div>
-  
-        }
-    </Container>
-    </Layout>
-        
+            )}
+            <Footer/>
+        </div>
     );
 };
 
