@@ -1,180 +1,154 @@
 import { Link, useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useCookies } from "react-cookie";
-import { TfiLock } from "react-icons/tfi";
-import { CiMail } from "react-icons/ci";
+import { useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 import axios from "axios";
 
 import login from "src/assets/Login.png";
+import Container from "components/Container";
 import Footer from "components/Footer";
-import Alert from "components/Alert";
 
 const Login = () =>{
-    const [alert, setAlert] = useState(false);
-    const [isActive, setIsActive] = useState(false);
+    const [password, setPassword] = useState<any>("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    let username = "";
-    const [idUser, setIdUser] = useState<any>([]);
-    const [cookies, setCookie] = useCookies();
+    const [cookies, setCookie] = useCookies(["userToken"]);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if (email && password) {
-    //         setDisabled(false);
-    //     } else{
-    //         setDisabled(true);
-    //     }
-    // }, [email, password]);
-
-    const handleModal = () => {
-        setIsActive(true);
-    };
-    
-    const handleEmail = (e: string) => {
-        setEmail(e);
-    };
-    
-    const handlePassword = (e: string) => {
-        setPassword(e);
-    };
-    
-        async function handleLogin(e:any) {
-            if (email && password !== '') {
-                axios.post("https://altaimmersive.site/login ", {
-                    "email": `${email}`,
-                    "password": `${password}`
-                })
-                    .then((response) => {
-                        const { name } = response.data.data;
-                        const { id } = response.data.data;
-                        const token = response.data.token
-                        username = name
-                        idUser.push(id)
-                        setCookie('username', username, { path: "/" })
-                        setCookie('id', idUser, { path: "/" })
-                        setCookie('token', token, { path: "/" })
-                        navigate(`/Dashboard/${username}`, {
-                            state: {
-                                userId: idUser
-                            }
-                        })
-                        window.location.reload()
-                    })
-                    .catch((error) => {
-                        setAlert(true)
-                        const result = isAlert();
-                    });
-            } else {
-                // jika username dan password kosong
-                setAlert(true)
-                const result = await isAlert();
+    const authLogin = useCallback(
+        async (e: any) => {
+          e.preventDefault();
+          try {
+            const response = await axios.post(
+              "https://my-extravaganza.site/users/login",
+              {
+                email: email,
+                password: password,
+              },
+            );
+            const { data } = response.data;
+            console.log(data);
+            if (data) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                text: "Signed successfully",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+              setCookie("userToken", data.role, { path: "/" });
+              setCookie("userToken", data.token, { path: "/" });
+              //dispatch(login(data));
+              navigate("/dashboard");
             }
-        }
-
-        // alert arror login
-        function isAlert() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    setAlert(false);
-                }, 7000);
+          } catch (error) {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Email or Password incorrect",
+              showConfirmButton: true,
             });
-        }
+            console.log(error);
+          }
+        },
+        [dispatch, email, navigate, password, setCookie],
+    );
 
-        // ketika username masih tersimpan di cookie ,user tidak perlu login kembali
-        if (cookies.username) {
-            navigate(`/Dashboard/${cookies.username}`);
+    useEffect(() => {
+        if (cookies.userToken) {
+          navigate("/dashboard");
         }
+      }, [cookies.userToken, navigate]);
 
 
     return (
-        <div>
-            {screen.width >= 885 ? (
-                // dekstop
-                <>
-                    <div className={`absolute top-0 z-50 w-full px-5 mt-5 duration-400 ${alert ? "block" : "hidden"}  `}>
-                        <Alert />
-                    </div>
-                    <div className="w-full h-full flex flex-row px-16">
-                        <div className="w-3/4 flex items-center ">
-                            <img className="w-full" src={login} alt="" />
-                        </div>
-                        <div className="w-2/5 flex flex-col gap-8 px-2">
-                            <h1 className="text-4xl">Welcome Back</h1>
-                            <p>To keep conected with us please login with your personal information by email adress and password </p>
-                            <form className="flex flex-col gap-2 ">
-                                <div className="flex items-center gap-3 p-2 rounded-lg bg-grayalta">
-                                    <CiMail className="text-2xl" />
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-[12px]">Email Adress</label>
-                                        <input onChange={(e) => handleEmail(e.target.value)} className="bg-transparent text-[16px] h-4 outline-none " type="email" required />
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 p-2 rounded-lg bg-grayalta">
-                                    <TfiLock className="text-2xl" />
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-[12px]">Password</label>
-                                        <input onChange={(e) => handlePassword(e.target.value)} className="bg-transparent text-[16px] h-4 outline-none " type="password" required />
-                                    </div>
-                                </div>
-                            </form>
-                            <div className="flex justify-between ">
-                                <div>
-                                    <input id="remember" className="cursor-pointer mr-2" type="checkbox" />
-                                    <label htmlFor="remember" className="cursor-pointer">
-                                        Remember Me
-                                    </label>
-                                </div>
-                                <label className="cursor-pointer">Forget password?</label>
-                            </div>
-                            <div>
-                                <button onClick={handleLogin} className="w-24 h-10 bg-blue text-white rounded-lg">
-                                    {" "}
-                                    Login
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            ) : (
-
-                // mobile & ipad
-                <div className="bg-gray-100 duration-500">
-                    <div className={`absolute top-0 z-50 w-full px-5 mt-5 duration-400 ${alert ? "block" : "hidden"}  `}>
-                        <Alert />
-                    </div>
-                    <div className=" h-screen overflow-auto bg-gray-100 ">
-                        <div className="flex flex-col justify-center py-5 px-3 items-center gap-8">
-                            <h1 className="text-4xl md:text-5xl font-bold text-blue">Welcome </h1>
-                            <img src={login} alt="" />
-                            <p className="text-center tetx-2xl md:text-2xl ">Start your career as a company's dream Software Engineer through the Immersive Program!</p>
-                            <button onClick={handleModal} className="w-56 h-12 rounded-full bg-blue text-white text-xl font-semibold">
-                                Login
-                            </button>
-                            <button className="w-56 h-12 rounded-full bg-blue text-white text-xl font-semibold">Register</button>
-                        </div>
-                    </div>
-
-                    {/* modal */}
-                    <div className={`${isActive ? "-translate-y-full" : "translate-y-full"} shadow-2xl shadow-black w-full h-4/5  fixed duration-500 bg-white flex flex-col items-center gap-8 p-3`}>
-                        <h1 className="text-3xl font-semibold text-blue">Login</h1>
-                        <p className="text-center text-blue">To keep conected with us please login with your personal information by email adress and password </p>
-                        <form className="flex flex-col gap-4">
-                            <input onChange={(e) => handleEmail(e.target.value)} className="p-2 px-5 outline-none bg-gray-100 rounded-full" type="email" placeholder="Email" required />
-                            <input onChange={(e) => handlePassword(e.target.value)} className="p-2 px-5 outline-none bg-gray-100 rounded-full" type="password" placeholder="Password" required />
-                            <button onClick={(e) => handleLogin(e.preventDefault())} className="w-58 h-8 bg-blue text-white rounded-full">
-                                Login
-                            </button>
-                        </form>
-                        <p className="text-md font-semibold text-blue">Forget Password?</p>
-                        <p className="text-blue">
-                        Dont have an account? <span className="text-orange">Register</span>
-                        </p>
-                    </div>
+        <Container>
+            <div className="relative flex flex-col w-full bg-dark-alta">
+                <div className="flex items-center justify-center  my-auto">
+                    <img src={login} width={500} alt="" className="" />
                 </div>
-            )}
-            <Footer/>
-        </div>
+            </div>
+
+            <div className="flex flex-col justify-center w-full h-screen ">
+                <div className="w-full p-6 m-auto bg-zinc-200 rounded-md shadow-xl lg:max-w-xl justify-center ">
+                    <h1 className="text-5xl font-bold text-center text-dark-alta uppercase mt-10 mb-10">
+                        Sign in
+                    </h1>
+                    <form
+                        className="mt-6 flex flex-col justify-center align-middle"
+                        onSubmit={authLogin}
+                    >
+                        <div className="mb-5 mx-auto">
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-semibold text-dark-alta"
+                            >
+                                Email
+                            </label>
+                            <input
+                                placeholder="example@gmail.com"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                type="email"
+                                className="input input-md block w-[400px] px-4  py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
+                            />
+                        </div>
+                        <div className="mb-2 mx-auto">
+                            <label
+                                htmlFor="password"
+                                className="block text-sm font-semibold text-dark-alta"
+                            >
+                                Password
+                            </label>
+                            <input
+                                placeholder="Type your password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                type="password"
+                                className="input input-md w-[400px] block mx-auto px-4 py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
+                            />
+                        </div>
+                        <div className="flex flex-row justify-between ">
+                            <p className="flex items-center text-dark-alta text-xs ml-16">
+                                <input
+                                className="mr-1 text-dark-alta checkbox checkbox-xs  "
+                                type="checkbox"
+                                />
+                                Remember Me
+                            </p>
+                            <a
+                                href="#"
+                                className="text-xs text-dark-alta hover:underline mr-16"
+                            >
+                                Forget Password?
+                            </a>
+                        </div>
+                        <div className="mt-10 mx-auto ">
+                        <button
+                            // onClick={() => handleLogin()}
+                            className="btn btn-wide mx-auto px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
+                        >
+                            Login
+                        </button>
+                        </div>
+                    </form>
+
+                    <p className="mt-8 text-xs font-light text-center text-dark-alta mb-10">
+                        {" "}
+                        Don't have an account?{" "}
+                        <a href="#" className="font-medium text-dark-alta hover:underline">
+                            Sign up
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            
+        </Container>
+
     );
 };
 
