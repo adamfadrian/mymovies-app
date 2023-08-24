@@ -15,7 +15,6 @@ interface CardProps {
 const Card: FC<CardProps> = ({
   id,
   image,
-  title,
   release_date,
   labelButton,
   onClickFav,
@@ -26,28 +25,27 @@ const Card: FC<CardProps> = ({
   }
 
   return (
-    <div className="card card-compact shadow-xl duration-300 glass bg-zinc-400 text-zinc-900 hover:bg-zinc-500 dark:bg-black dark:text-zinc-300 hover:scale-105">
+    <div className="mb-10 h-auto mx-auto cursor-pointer w-full xl:w-[280px] 2xl:w-[300px] shadow-md rounded-2xl">
       <figure onClick={() => onClickDetail()}>
-        <button>
+        <button className=" dark:hover:bg-black dark:hover:text-white">
           <img
-            className="duration-300 hover:scale-105 hover:blur-sm"
+            className="rounded-2xl text-center hover:rounded-1xl duration-100 hover:scale-125 image-full"
             src={`https://image.tmdb.org/t/p/w500${image}`}
             alt="Image not found."
           />
         </button>
       </figure>
-      <div className="card-body gap-0">
+      <div className="card-body gap-0  dark:hover:bg-black dark:hover:text-white">
         <span
-          className="m:0 p:0 flex font-bold text-xs sm:text-base"
+          className="m:0 p:0 flex font-bold text-xs sm:text-base text-center"
           onClick={() => onClickDetail()}
         >
-          <a className="hover:cursor-pointer">{title}</a>
         </span>
 
-        <p className="text-xs font-light sm:text-base m:0 p:0">
+        <p className="text-xs text-center mb-5 dark:bg-white dark:text-black font-light sm:text-base m:0 p:0">
           {release_date}
         </p>
-        <div className="card-actions flex justify-center mt-5">
+        <div className="card-actions align-middle flex justify-center mt-5">
           <Button label={labelButton} onClick={onClickFav} />
         </div>
       </div>

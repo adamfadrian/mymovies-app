@@ -97,7 +97,7 @@ const Index = () => {
                 backgroundImage: `linear-gradient(rgba(0, 0,0,0.3), rgba(0,0,0,0.3)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`,
               }}
             >
-              <p className="text-white tracking-widest font-bold break-words lg:text-2xl">
+              <p className="text-white text-center tracking-widest font-bold break-words lg:text-2xl">
                 {data.title}
               </p>
             </div>
@@ -105,7 +105,7 @@ const Index = () => {
         />
       )}
       {loading ? (
-        <div className="flex justify-center items-center w-full">
+        <div className="flex justify-center text-center items-center w-full">
           <TextLoading />
         </div>
       ) : (
@@ -113,7 +113,7 @@ const Index = () => {
           <p className="m-10 flex justify-center font-semibold text-xl text-zinc-900 dark:text-zinc-300 sm:text-3xl">
             Now Playing
           </p>
-          <div className="grid grid-cols-3 gap-4 m-4 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-3 text-center gap-4 m-4 md:grid-cols-4 lg:grid-cols-5">
             {datas.map((data) => (
               <Card
                 key={data.id}
