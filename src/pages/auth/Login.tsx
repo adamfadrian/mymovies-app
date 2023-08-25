@@ -8,60 +8,61 @@ import axios from "axios";
 import login from "src/assets/Login.png";
 import Container from "components/Container";
 import Layout from "components/Layout";
+import { setUser } from "utils/redux/reducers/user/userSlice";
 
-const Login = () =>{
+interface UserData {
+    email: string;
+    password: string;
+    fullname: string;
+}
+
+const Login = () => {
     const [password, setPassword] = useState<any>("");
     const [email, setEmail] = useState("");
     const [cookies, setCookie] = useCookies(["userToken"]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const authLogin = useCallback(
-        async (e: any) => {
-          e.preventDefault();
-          try {
-            const response = await axios.post(
-              "https://my-extravaganza.site/users/login",
-              {
-                email: email,
-                password: password,
-              },
-            );
-            const { data } = response.data;
-            console.log(data);
-            if (data) {
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                text: "Signed successfully",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              setCookie("userToken", data.role, { path: "/" });
-              setCookie("userToken", data.token, { path: "/" });
-              //dispatch(login(data));
-              navigate("/dashboard");
+    const getUser = async () => {
+        try {
+            const res = await axios.get('http://localhost:3000/user')
+            if (res) {
+                return res.data
             }
-          } catch (error) {
-            Swal.fire({
-              position: "center",
-              icon: "error",
-              title: "Email or Password incorrect",
-              showConfirmButton: true,
-            });
-            console.log(error);
-          }
-        },
-        [dispatch, email, navigate, password, setCookie],
-    );
+        } catch (error) {
+            console.log('error please run the db.json', error)
+        }
+    }
 
     useEffect(() => {
-        if (cookies.userToken) {
-          navigate("/dashboard");
+        getUser()
+    }, [])
+
+    const handleLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
+        e.preventDefault()
+        try {
+            const currentUsers = await getUser()
+
+            const user = currentUsers.find((user: UserData) => user.email === email && user.password === password)
+            if (user) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Login Successful",
+                    text: "You have successfully logged in.",
+                });
+                dispatch(setUser(user));
+                navigate("/");
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Credentials",
+                    text: "Please check your email and password.",
+                });
+            }
+        } catch (error) {
+            console.log('error', error)
         }
-      }, [cookies.userToken, navigate]);
-
-
+    }
     return (
         <Layout>
             <Container>
@@ -78,7 +79,7 @@ const Login = () =>{
                         </h1>
                         <form
                             className="mt-6 flex flex-col justify-center align-middle"
-                            onSubmit={authLogin}
+                            onSubmit={handleLogin}
                         >
                             <div className="mb-5 mx-auto">
                                 <label
@@ -115,8 +116,8 @@ const Login = () =>{
                             <div className="flex flex-row justify-between ">
                                 <p className="flex items-center text-dark-alta text-xs ml-16">
                                     <input
-                                    className="mr-1 text-dark-alta checkbox checkbox-xs  "
-                                    type="checkbox"
+                                        className="mr-1 text-dark-alta checkbox checkbox-xs  "
+                                        type="checkbox"
                                     />
                                     Remember Me
                                 </p>
@@ -128,12 +129,12 @@ const Login = () =>{
                                 </a>
                             </div>
                             <div className="mt-10 mx-auto ">
-                            <button
-                                // onClick={() => handleLogin()}
-                                className="btn btn-wide mx-auto px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
-                            >
-                                Login
-                            </button>
+                                <button
+                                    type="submit"
+                                    className="btn btn-wide mx-auto px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
+                                >
+                                    Login
+                                </button>
                             </div>
                         </form>
 
@@ -147,7 +148,7 @@ const Login = () =>{
                     </div>
                 </div>
 
-                
+
             </Container>
         </Layout>
 

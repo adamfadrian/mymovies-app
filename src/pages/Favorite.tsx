@@ -8,7 +8,7 @@ import { useTitle } from "utils/hooks/customHooks";
 import { MovieType } from "utils/types/movie";
 import { RootState } from "utils/types/redux";
 import { removeFavList } from "utils/redux/reducers/reducer";
-import Card from "components/Card";
+import Card from "components/shared/Card";
 
 interface PropsType {}
 

@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { FC, ReactNode } from "react";
 
 import { Button } from "./Button";
+import { useSelector } from "react-redux";
+import { RootState } from "utils/types/redux";
+import Swal from "sweetalert2";
 
 interface CardProps {
   id?: number;
@@ -23,8 +26,25 @@ const Card: FC<CardProps> = ({
   description
 }) => {
   const navigate = useNavigate();
+  const currentUser = useSelector((state: RootState) => state.user.currentUser)
   function onClickDetail() {
-    navigate(`/detail/${id}`, { state: { dataDetail: id }});
+    if (!currentUser) {
+      Swal.fire({
+        icon: "warning",
+        title: "Anda Belum Login",
+        text: "Silahkan Login terlebih dahulu",
+        confirmButtonText: "Login",
+        confirmButtonColor: "#31CFB9",
+        cancelButtonText: "Cancel",
+        cancelButtonColor: "#FF6E40",
+        showCancelButton:true,
+    }).then((go) => {
+        if(go.isConfirmed)
+        navigate('/login')
+    })
+    } else {
+      navigate(`/detail/${id}`, { state: { dataDetail: id } });
+    }
   }
 
   return (

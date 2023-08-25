@@ -116,16 +116,16 @@ const Registrasi = () =>{
                                 // onClick={() => handleLogin()}
                                 className="btn btn-wide mx-auto px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-orange-alta rounded-md hover:bg-orange-700 focus:outline-none focus:bg-dark-alta"
                             >
-                                Login
+                                Register
                             </button>
                             </div>
                         </form>
 
                         <p className="mt-8 text-xs font-light text-center text-dark-alta mb-10">
                             {" "}
-                            Don't have an account?{" "}
+                            Already have an account?{" "}
                             <a href="Login" className="font-medium text-dark-alta hover:underline">
-                                Sign up
+                                Login
                             </a>
                         </p>
                     </div>
