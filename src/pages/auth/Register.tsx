@@ -1,10 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState, useCallback } from "react";
-import { useCookies } from "react-cookie";
-import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
 import axios from "axios";
-
 import upload from "assets/Upload.png";
 import Container from "components/Container";
 import Layout from "components/Layout";
@@ -13,54 +9,25 @@ const Registrasi = () =>{
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
     const [fullname, setFullname] = useState("");
-    const [cookies, setCookie] = useCookies(["userToken"]);
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const authRegister = useCallback(
-        async (e: any) => {
-          e.preventDefault();
-          try {
-            const response = await axios.post(
-              "https://my-extravaganza.site/users/login",
-              {
-                email: email,
-                password: password,
-              },
-            );
-            const { data } = response.data;
-            console.log(data);
-            if (data) {
-              Swal.fire({
-                position: "center",
-                icon: "success",
-                text: "Signed successfully",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              setCookie("userToken", data.role, { path: "/" });
-              setCookie("userToken", data.token, { path: "/" });
-              //dispatch(login(data));
-              navigate("/dashboard");
-            }
-          } catch (error) {
-            Swal.fire({
-              position: "center",
-              icon: "error",
-              title: "Email or Password incorrect",
-              showConfirmButton: true,
-            });
-            console.log(error);
-          }
-        },
-        [dispatch, email, navigate, password, setCookie],
-    );
 
-    useEffect(() => {
-        if (cookies.userToken) {
-          navigate("/dashboard");
+    const handleRegister = async() => {
+        const data = {
+            email: email,
+            password: password,
+            fullname: fullname
         }
-      }, [cookies.userToken, navigate]);
+        try {
+            const res = await axios.post('http://localhost:3000/user', data)
+            console.log(res.data)
+            if(res.data){
+                navigate('/login')
+            }
+        } catch (error) {
+            
+        }
+    }  
 
 
     return (
@@ -79,7 +46,7 @@ const Registrasi = () =>{
                         </h1>
                         <form
                             className="mt-7 flex flex-col justify-center align-middle"
-                            onSubmit={authRegister}
+                            onSubmit={handleRegister}
                         >
                             <div className="mb-5 mx-auto">
                                 <label

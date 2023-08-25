@@ -1,33 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { MovieType } from "utils/types/movie";
+import { ReducerPayload } from "../ReducerPayload";
 
 interface StateType {
   favorites: MovieType[];
-  loading: boolean;
 }
 
 const initialState: StateType = {
   favorites: [],
-  loading: true,
 };
 
 const sliceState = createSlice({
   name: "state",
   initialState: initialState,
   reducers: {
-    setFavorites: (state, action) => {
-      state.favorites = action.payload;
+    addMovieToFav: (state, { payload }: ReducerPayload<MovieType>) => {
+      const isMovieInFavorite = state.favorites.some((i) => i.id === payload.id);
+      if (!isMovieInFavorite) {
+        state.favorites.push({ ...payload });
+        console.log("payload", payload);
+      } else {
+        alert("Movie already in favorites");
+      }
     },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
+    removeFavList: (state, { payload }: ReducerPayload<MovieType | any>) => {
+      state.favorites = state.favorites.filter((item) => {
+        return item.id !== payload.id;
+      });
+      console.log("delete", payload);
     },
   },
 });
 
-const reducer = {
-  state: sliceState.reducer,
-};
+const movieReducer= sliceState.reducer
 
-export const { setFavorites, setLoading } = sliceState.actions;
-export default reducer;
+export const { addMovieToFav, removeFavList } = sliceState.actions;
+export default movieReducer;

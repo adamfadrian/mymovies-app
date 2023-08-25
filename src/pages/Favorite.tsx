@@ -3,12 +3,12 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import moment from "moment";
 
 import Layout from "components/Layout";
-import Card from "components/Card";
-
-import { setFavorites } from "utils/redux/reducers/reducer";
+// import { setFavorites } from "utils/redux/reducers/reducer";
 import { useTitle } from "utils/hooks/customHooks";
 import { MovieType } from "utils/types/movie";
 import { RootState } from "utils/types/redux";
+import { removeFavList } from "utils/redux/reducers/reducer";
+import Card from "components/Card";
 
 interface PropsType {}
 
@@ -20,10 +20,10 @@ interface StateType {
 const Favorite = () => {
   const dispatch = useDispatch();
   useTitle("Movix | Favorites");
-  const datas = useSelector((state: RootState) => state.data.favorites);
+  // const datas = useSelector((state: RootState) => state.data.favorites);
   // const [datas, setDatas] = useState<MovieType[]>([]);
   // const [loading, setLoading] = useState<boolean>(true);
-
+  const movieDetails = useSelector((state: RootState) => state.favorite.favorites)
   // useEffect(() => {
   //   fetchData();
   // }, [removeFavorite]);
@@ -37,11 +37,7 @@ const Favorite = () => {
   // }
 
   function removeFavorite(data: MovieType) {
-    let dupeDatas: MovieType[] = datas.slice();
-    const filterData = dupeDatas.filter((item) => item.id !== data.id);
-    localStorage.setItem("FavMovie", JSON.stringify(filterData));
-    dispatch(setFavorites(filterData));
-    alert("Removed.");
+    dispatch(removeFavList(data))
   }
 
   return (
@@ -56,11 +52,12 @@ const Favorite = () => {
         Favorites
       </p>
       <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-4 m-4">
-        {datas.map((data) => (
+        {movieDetails.map((data) => (
           <Card
             key={data.id}
             id={data.id}
             title={data.title}
+            description={data.overview}
             image={data.poster_path}
             release_date={moment(data.release_date).format("YYYY")}
             labelButton={<FaRegTrashAlt />}

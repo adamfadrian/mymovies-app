@@ -7,6 +7,7 @@ interface CardProps {
   id?: number;
   title?: string;
   image?: string;
+  description?: string;
   release_date?: string;
   labelButton?: string | ReactNode;
   onClickFav?: () => void;
@@ -18,10 +19,12 @@ const Card: FC<CardProps> = ({
   release_date,
   labelButton,
   onClickFav,
+  title,
+  description
 }) => {
   const navigate = useNavigate();
   function onClickDetail() {
-    navigate(`/detail/${id}`);
+    navigate(`/detail/${id}`, { state: { dataDetail: id }});
   }
 
   return (
@@ -36,14 +39,16 @@ const Card: FC<CardProps> = ({
         </button>
       </figure>
       <div className="card-body gap-0  dark:hover:bg-black dark:hover:text-white">
+        <h1 className="text-2xl font-bold mb-4" style={{ height: '3rem', lineHeight: '1.5rem', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical' }}>{title}</h1>
+        <p style={{ height: '9rem', lineHeight: '1.5rem', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: '6', WebkitBoxOrient: 'vertical' }}>{description}</p>
         <span
           className="m:0 p:0 flex font-bold text-xs sm:text-base text-center"
           onClick={() => onClickDetail()}
         >
         </span>
 
-        <p className="text-xs text-center mb-5 dark:bg-white dark:text-black font-light sm:text-base m:0 p:0">
-          {release_date}
+        <p className="text-xs text-center mb-5 dark:bg-white dark:text-black font-light sm:text-base m:0 p:0 mt-5">
+          Release date:  {release_date}
         </p>
         <div className="card-actions align-middle flex justify-center mt-5">
           <Button label={labelButton} onClick={onClickFav} />

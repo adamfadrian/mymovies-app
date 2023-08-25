@@ -8,7 +8,7 @@ import Register from "pages/auth/Register";
 import Detail from "pages/Detail";
 import Favorite from "pages/Favorite";
 
-import { setFavorites } from "utils/redux/reducers/reducer";
+// import { setFavorites } from "utils/redux/reducers/reducer";
 import { ThemeContext } from "utils/context";
 
 const router = createBrowserRouter([
@@ -47,12 +47,12 @@ const App = () => {
     }
   }, [theme]);
 
-  useEffect(() => {
-    const getFavMovies = localStorage.getItem("FavMovie");
-    if (getFavMovies) {
-      dispatch(setFavorites(JSON.parse(getFavMovies)));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const getFavMovies = localStorage.getItem("FavMovie");
+  //   if (getFavMovies) {
+  //     dispatch(setFavorites(JSON.parse(getFavMovies)));
+  //   }
+  // }, []);
 
   return (
     <ThemeContext.Provider value={background}>
