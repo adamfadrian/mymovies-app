@@ -21,7 +21,7 @@ const Registrasi = () =>{
         try {
             const res = await axios.post('http://localhost:3000/user', data)
             console.log(res.data)
-            if(res.data){
+            if(res){
                 navigate('/login')
             }
         } catch (error) {

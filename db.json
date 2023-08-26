@@ -23,6 +23,24 @@
       "password": "123sadasd",
       "fullname": "asdasdasdas",
       "id": 4
+    },
+    {
+      "email": "jepara@gmail.com",
+      "password": "123",
+      "fullname": "Mba qonik",
+      "id": 5
+    },
+    {
+      "email": "jamal@gmail.com",
+      "password": "123",
+      "fullname": "asda",
+      "id": 6
+    },
+    {
+      "email": "res@gmail.com",
+      "password": "123",
+      "fullname": "sadas",
+      "id": 7
     }
   ]
 }

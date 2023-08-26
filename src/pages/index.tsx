@@ -23,14 +23,13 @@ const Index = () => {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState('')
-  const currentUser = useSelector((state: RootState) => state.user.currentUser)
 
-  console.log('currentUser', currentUser)
+  // console.log('currentUser', currentUser)
   const fetchData = async (page: number) => {
     setLoading(true)
     try {
       const res = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${page}`, header)
-      console.log('res.data', res.data)
+      // console.log('res.data', res.data)
       const { results, total_pages } = res.data
       setDatas(results)
       setTotalPage(total_pages)
@@ -98,66 +97,6 @@ const Index = () => {
             )}
         </div>
       </div>
-      {/* {!loading && (
-        <Carousel
-          datas={datas.slice(0, 5)}
-          content={(data) => (
-            <div
-              className="w-full h-full flex justify-center items-center bg-contain bg-no-repeat bg-center sm:bg-cover"
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0,0,0.3), rgba(0,0,0,0.3)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`,
-              }}
-            >
-              <p className="text-white text-center tracking-widest font-bold break-words lg:text-2xl">
-                {data.title}
-              </p>
-            </div>
-          )}
-        />
-      )}
-      {loading ? (
-        <div className="flex justify-center text-center items-center w-full">
-          <TextLoading />
-        </div>
-      ) : (
-        <div>
-          <p className="m-10 flex justify-center font-semibold text-xl text-zinc-900 dark:text-zinc-300 sm:text-3xl">
-            Now Playing
-          </p>
-          <div className="grid grid-cols-3 text-center gap-4 m-4 md:grid-cols-4 lg:grid-cols-5">
-            {datas.map((data) => (
-              <Card
-                key={data.id}
-                id={data.id}
-                title={data.title}
-                image={data.poster_path}
-                release_date={moment(data.release_date).format("YYYY")}
-                labelButton={<FaRegHeart />}
-                onClickFav={() => handleFavorite(data)}
-              />
-            ))}
-          </div>
-          <div className="btn-group flex justify-center m-10">
-            <button
-              className="px-2 btn border-transparent w-fit text-[0.75rem] bg-zinc-300 text-zinc-900 hover:bg-zinc-400 hover:border-transparent dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700 md:text-base disabled:dark:text-zinc-800"
-              onClick={() => prevPage()}
-              disabled={page === 1}
-            >
-              <FaChevronLeft />
-            </button>
-            <button className="px-3 border-transparent w-fit text-[0.75rem] bg-zinc-300 text-zinc-900 hover:cursor-default hover:border-transparent dark:bg-zinc-900 dark:text-zinc-300 md:text-base">
-              {page}
-            </button>
-            <button
-              className="px-2 btn border-transparent w-fit text-[0.75rem] bg-zinc-300 text-zinc-900 hover:bg-zinc-400 hover:border-transparent dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-700 md:text-base disabled:dark:text-zinc-800"
-              onClick={() => nextPage()}
-              disabled={page === totalPage}
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        </div>
-      )} */}
     </Layout>
   );
 };

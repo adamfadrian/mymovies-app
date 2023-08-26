@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "utils/types/redux";
 import { resetUser } from "utils/redux/reducers/user/userSlice";
+import userProfile from 'assets/user.png'
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,7 +22,6 @@ const Layout: FC<LayoutProps> = ({ children, onSearch }) => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state: RootState) => state.user.currentUser)
 
-  console.log('currentUser', currentUser)
   function handleTheme() {
     theme === "light" ? setTheme("dark") : setTheme("light");
   };
@@ -132,11 +132,20 @@ const Layout: FC<LayoutProps> = ({ children, onSearch }) => {
         </div>
         <>
           {currentUser ? (
-            <button
-              onClick={handleLogout}
-              className="rounded-full tracking-wide border-2 text-white font-semibold text-center transition-colors transform bg-slate-800 p-1 w-24 duration-300 hover:cursor-pointer hover:bg-red-700 active:scale-90">
-              Logout
-            </button>
+            <div className="dropdown dropdown-end">
+              <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full">
+                 <img src={userProfile} alt="profile" />
+                </div>
+                 <h1>{currentUser?.fullname}</h1>
+              </label>
+              <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+               
+                <li>
+                  <button onClick={handleLogout}>Logout</button>
+                </li>
+              </ul>
+            </div>
 
           ) : (
             <Link to="/login">
