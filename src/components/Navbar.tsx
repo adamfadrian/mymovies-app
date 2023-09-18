@@ -50,7 +50,7 @@ const Navbar = () => {
           to="/"
           className="justify-center normal-case font-[1000] italic text-2xl text-red-600 hidden md:flex md:ml-5"
         >
-          MOVIX
+          CINEMAX
         </Link>
       </div>
       <div className="navbar-center">
@@ -58,7 +58,7 @@ const Navbar = () => {
           to="/"
           className="justify-center normal-case font-[1000] italic text-2xl text-red-600 md:hidden"
         >
-          MOVIX
+          CINEMAX
         </Link>
       </div>
       <div className="navbar-end">
@@ -115,7 +115,7 @@ const Navbar = () => {
           <>
             <Link to="/login">
               <button className="rounded-full tracking-wide border-2 text-white font-semibold text-center transition-colors transform bg-slate-800 p-1 w-24 duration-300 hover:cursor-pointer hover:bg-red-700 active:scale-90">
-                Login
+                LOGIN
               </button>
             </Link>
           </>

@@ -41,6 +41,12 @@
       "password": "123",
       "fullname": "sadas",
       "id": 7
+    },
+    {
+      "email": "fajri123@gmail.com",
+      "password": "abcd1234",
+      "fullname": "FAJRI",
+      "id": 8
     }
   ]
 }

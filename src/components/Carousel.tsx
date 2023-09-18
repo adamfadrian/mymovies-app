@@ -25,6 +25,8 @@ const Carousel: FC<CarouselProps> = ({ datas, content }) => {
     }
   };
 
+  
+
   const isDisabled = (direction: string) => {
     if (direction === "prev") {
       return currentIndex <= 0;

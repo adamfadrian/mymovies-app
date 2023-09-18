@@ -4,7 +4,6 @@ import arrayShuffle from "array-shuffle";
 import moment from "moment";
 
 import { TextLoading } from "components/Loading";
-import Carousel from "components/Carousel";
 import Layout from "components/Layout";
 
 import { MovieType, VideosType } from "utils/types/movie";
@@ -21,15 +20,23 @@ const Detail = () => {
   const [videos, setVideos] = useState<VideosType[]>([]);
   const [data, setData] = useState<MovieType>({});
   const [loading, setLoading] = useState<boolean>(true);
-  useTitle(`Movix | ${data.title}`);
+  const [randomVideo, setRandomVideo] = useState<string | null>(null);
+
+  useTitle(`CINEMAX | ${data.title}`);
 
 
   const fetchMovieDetail = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`https://api.themoviedb.org/3/movie/${id_movie}?language=en-US`, header)
+      const res = await axios.get(`https://api.themoviedb.org/3/movie/${id_movie}?language=en-US&append_to_response=videos`, header)
       console.log(res.data)
       setData(res.data)
+       setVideos(res.data.videos?.results)
+      // const videoResults = data.videos?.results;
+      //   if (videoResults && videoResults.length > 0) {
+      //     const randomIndex = Math.floor(Math.random() * videoResults.length);
+      //     setRandomVideo=
+      //   }
       setLoading(false)
 
     } catch (error) {
@@ -37,9 +44,34 @@ const Detail = () => {
     }
   }
 
+  // function fetchData() {
+  //   fetch(
+  //     https://api.themoviedb.org/3/movie/${id_movie}?api_key=${
+  //       import.meta.env.VITE_API_KEY
+  //     }&language=en-US&append_to_response=videos,
+  //     { method: "GET" }
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //       setData(data);
+  //       setVideos(data.videos?.results);
+  //       const videoResults = data.videos?.results;
+  //       if (videoResults && videoResults.length > 0) {
+  //         const randomIndex = Math.floor(Math.random() * videoResults.length);
+  //         setRandomVideo(videoResults[randomIndex].key);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       alert(error.toString());
+  //     })
+  //     .finally(() => setLoading(false));
+  // }
+  
   useEffect(() => {
     fetchMovieDetail()
   }, [])
+
   return (
     <Layout>
       {
@@ -87,7 +119,9 @@ const Detail = () => {
                 </p>
                 <p className="text-sm pt-5 sm:text-lg">{data.overview}</p>
                 <div className="card-actions flex justify-center mt-10">
-                  <Button label="WATCH" />
+                  <a href={`https://www.youtube.com/embed/${setVideos}`}>
+                    <Button label="WATCH" />
+                  </a>
                 </div>
               </div>
             </div>

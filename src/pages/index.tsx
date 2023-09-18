@@ -17,7 +17,7 @@ import { RootState } from "utils/types/redux";
 
 const Index = () => {
   const dispatch = useDispatch();
-  useTitle("Movix | Now Playing");
+  useTitle("CINEMAX | Now Playing");
   const [datas, setDatas] = useState<MovieType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [totalPage, setTotalPage] = useState<number>(1);

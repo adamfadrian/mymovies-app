@@ -96,7 +96,7 @@ const Registrasi = () =>{
                                     className="input input-md w-[400px] block mx-auto px-4 py-2 mt-2 text-dark-alta bg-white border rounded-md focus:border-dark-alta focus:ring-dark-alta outline-dark-alta outline outline-1 focus:outline-none focus:ring focus:ring-opacity-40"
                                 />
                             </div>
-                            <div className="flex flex-row justify-between ">
+                            {/* <div className="flex flex-row justify-between ">
                                 <p className="flex items-center text-dark-alta text-xs ml-16">
                                     <input
                                     className="mr-1 text-dark-alta checkbox checkbox-xs  "
@@ -110,7 +110,7 @@ const Registrasi = () =>{
                                 >
                                     Forget Password?
                                 </a>
-                            </div>
+                            </div> */}
                             <div className="mt-10 mx-auto ">
                             <button
                                 // onClick={() => handleLogin()}

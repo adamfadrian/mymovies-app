@@ -19,7 +19,7 @@ interface StateType {
 
 const Favorite = () => {
   const dispatch = useDispatch();
-  useTitle("Movix | Favorites");
+  useTitle("CINEMAX | Favorites");
   // const datas = useSelector((state: RootState) => state.data.favorites);
   // const [datas, setDatas] = useState<MovieType[]>([]);
   // const [loading, setLoading] = useState<boolean>(true);
